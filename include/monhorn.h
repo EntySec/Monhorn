@@ -25,7 +25,7 @@
 #ifndef _MONHORN_H_
 #define _MONHORN_H_
 
-void begin_encrypt(path, iv, key);
-void begin_decrypt(path, iv, key);
+void begin_encrypt(char *, char *, char *);
+void begin_decrypt(char *, char *, char *);
 
 #endif /* _MONHORN_H_ */
