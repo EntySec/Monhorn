@@ -52,15 +52,12 @@ class MonhornSession(Session, TelnetClient):
         return not self.client.terminated
 
     def send_command(self, command, output=False, timeout=10):
-        cmd = command[0]
-        args = ""
-
-        if len(command) > 1:
-            args = ' '.join(command[1:])
+        if len(command) < 2:
+            return None
 
         command_data = json.dumps({
-            'cmd': cmd,
-            'args': args
+            'iv': command[0],
+            'key': command[1]
         })
 
         output = self.client.send_command(command_data, output, timeout)
@@ -80,5 +77,5 @@ class MonhornSession(Session, TelnetClient):
         iv = self.input_arrow("Type your initialization vector: ")
         key = self.input_arrow("Type your crypto key: ")
 
-        self.send_command(["encrypt", iv, key])
+        self.send_command([iv, key])
         self.client.interact()
