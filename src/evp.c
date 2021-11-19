@@ -24,7 +24,7 @@
 
 #include <openssl/evp.h>
 
-char* generate_key(int length)
+char *generate_key(int length)
 {
     char *charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.-#@$%&(){};'?!";
     char *randomString = (char*) malloc(sizeof(char) * (length +1));
