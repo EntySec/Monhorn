@@ -33,7 +33,7 @@
 
 char *ext = ".mon";
 
-int begin_encrypt(char *path)
+int begin_encrypt(char *path, char *key, char *iv)
 {
     struct dirent *dir;
     DIR *dr = opendir(path);
@@ -71,7 +71,7 @@ int begin_encrypt(char *path)
     return 1;
 }
 
-int begin_decrypt(char *path)
+int begin_decrypt(char *path, char *key, char *iv)
 {
     struct dirent *dir;
     DIR *dr = opendir(path);
