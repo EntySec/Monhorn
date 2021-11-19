@@ -28,5 +28,6 @@
 void prevent_termination();
 void prevent_reboot();
 void self_corrupt(char *);
+void redirect_to_null();
 
 #endif /* _UTILS_H_ */
