@@ -28,7 +28,7 @@ from setuptools import setup, find_packages
 
 setup(name='monhorn',
       version='1.0.0',
-      description='',
+      description='Monhorn is an implementation of HatSploit ransomware for Unix-like systems, that firstly establishes a remote connection and then begins crypto operations.',
       url='http://github.com/EntySec/Monhorn',
       author='EntySec',
       author_email='entysec@gmail.com',
