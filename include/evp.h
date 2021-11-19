@@ -25,7 +25,7 @@
 #ifndef _EVP_H_
 #define _EVP_H_
 
-char* generate_key(int);
+char *generate_key(int);
 void encrypt(FILE *, FILE *, char *, char *);
 void decrypt(FILE *, FILE *, char *, char *);
 
