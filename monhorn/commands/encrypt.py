@@ -5,6 +5,8 @@
 # Current source: https://github.com/EntySec/HatSploit
 #
 
+import json
+
 from hatsploit.lib.command import Command
 
 
@@ -21,10 +23,10 @@ class HatSploitCommand(Command):
     }
 
     def run(self, argc, argv):
-        ransomware = {
+        data = json.dumps({
             'path': argv[1],
             'key': argv[2],
             'iv': argv[3]
-        }
+        })
 
-        self.session.send_command([argv[0], ransomware])
+        self.session.send_command(f"{argv[0]} '{data}'")
