@@ -63,7 +63,7 @@ clean:
 
 pwny: $(OBJS)
 	$(Q) $(MSG) [Compiling...]
-	$(Q) $(CC) $(OBJS) -o $(TARGET) -I$(INCLUDE) -L. -lmonhorn
+	$(Q) $(CC) $(OBJS) -o $(TARGET) -I$(INCLUDE) $(LDFLAGS) -L. -lmonhorn
 	$(Q) $(MSG) [Done]
 
 	$(Q) $(MSG) [Stripping...]
@@ -82,4 +82,4 @@ $(LIBRARY): $(OBJECTS)
 
 $(BUILD)/%.o: $(SOURCE)/%.c
 	$(Q) $(MSG) [Compiling...] $<
-	$(Q) $(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@
+	$(Q) $(CC) $(CFLAGS) -c $< -o $@
