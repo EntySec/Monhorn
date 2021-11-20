@@ -41,7 +41,7 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
     if (dr == NULL)
         return 0;
 
-    char *newName, *toVisit;
+    char *newName, *toVisit, *process;
     FILE *old, *newone;
 
     while ((dir = readdir(dr)) != NULL) {
