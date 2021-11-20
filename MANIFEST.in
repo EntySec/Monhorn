@@ -1,1 +1,2 @@
+recursive-include pwny/commands *
 recursive-include monhorn/resources *
