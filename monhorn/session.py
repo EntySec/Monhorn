@@ -28,12 +28,16 @@ import os
 import json
 
 from hatsploit.lib.session import Session
+from hatsploit.lib.commands import Commands
 
 from hatsploit.utils.telnet import TelnetClient
 
 
 class MonhornSession(Session, TelnetClient):
     commands = Commands()
+
+    prompt = '%linemonhorn%end > '
+    monhorn = f'{os.path.dirname(os.path.dirname(__file__))}/monhorn/commands/'
 
     client = None
 
@@ -52,14 +56,15 @@ class MonhornSession(Session, TelnetClient):
         return not self.client.terminated
 
     def send_command(self, command, output=False, timeout=10):
-        if len(command) < 4:
-            return None
+        cmd = command[0]
+        args = ""
+
+        if len(command) > 1:
+            args = ' '.join(command[1:])
 
         command_data = json.dumps({
-            'action': command[0],
-            'path': command[1],
-            'key': command[2],
-            'iv': command[3]
+            'cmd': cmd,
+            'args': args
         })
 
         output = self.client.send_command(command_data, output, timeout)
@@ -71,3 +76,31 @@ class MonhornSession(Session, TelnetClient):
         if self.client.terminated:
             self.print_warning("Connection terminated.")
             return
+
+        self.print_process("Loading Monhorn commands...")
+        commands = self.monhorn
+
+        monhorn = self.commands.load_commands(commands)
+        for command in monhorn:
+            monhorn[command].session = self
+
+        self.print_information(f"Loaded {len(monhorn)} commands.")
+        self.print_empty()
+
+        while True:
+            commands = self.input_empty(self.prompt)
+
+            if commands:
+                if commands[0] == 'quit':
+                    break
+
+                elif commands[0] == 'help':
+                    self.commands.show_commands(monhorn)
+                    continue
+
+                self.commands.execute_custom_command(commands, monhorn)
+
+                if commands[0] == 'exit':
+                    self.client.terminated = True
+                    self.print_warning("Connection terminated.")
+                    return
