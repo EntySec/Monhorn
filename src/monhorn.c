@@ -62,7 +62,9 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
             } else {
                 char *process;
                 sprintf(process, "Encrypting %s\n", dir->d_name);
+
                 send_channel(channel, process);
+                free(process);
             }
             free(toVisit);
         }
@@ -100,7 +102,9 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
             } else {
                 char *process;
                 sprintf(process, "Decrypting %s\n", dir->d_name);
+
                 send_channel(channel, process);
+                free(process);
             }
             free(toVisit);
         }
