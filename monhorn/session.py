@@ -56,16 +56,15 @@ class MonhornSession(Session, TelnetClient):
         return not self.client.terminated
 
     def send_command(self, command, output=False, timeout=10):
-        if len(command) > 1:
-            if isinstance(command[1], dict):
-                args = command[1]
-            else:
-                args = ' '.join(command[1:])
+        commands = self.format_commands(command)
+
+        if len(commands) > 1:
+            args = ' '.join(commands[1:])
         else:
             args = None
 
         command_data = json.dumps({
-            'cmd': command[0],
+            'cmd': commands[0],
             'args': args
         })
 
