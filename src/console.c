@@ -38,16 +38,30 @@ void interact(int channel)
         char *input = read_channel(channel);
         JSONObject *json = parseJSON(input);
 
-        char *action = find_json(json, "action");
-        char *path = find_json(json, "path");
-        char *key = find_json(json, "key");
-        char *iv = find_json(json, "iv");
+        char *cmd = find_json(json, "cmd");
+        char *args = find_json(json, "args");
 
         freeJSONFromMemory(json);
 
-        if (strcmp(action, "encrypt") == 0)
+        if (strcmp(cmd, "encrypt") == 0) {
+            JSONObject *json = parseJSON(args);
+
+            char *path = find_json(json, "path");
+            char *key = find_json(json, "key");
+            char *iv = find_json(json, "iv");
+
+            freeJSONFromMemory(json);
             begin_encrypt(path, key, iv);
-        else if (strcmp(action, "decrypt") == 0)
+        } else if (strcmp(cmd, "decrypt") == 0) {
+            JSONObject *json = parseJSON(args);
+
+            char *path = find_json(json, "path");
+            char *key = find_json(json, "key");
+            char *iv = find_json(json, "iv");
+
+            freeJSONFromMemory(json);
             begin_decrypt(path, key, iv);
+        } else if (strcmp(cmd, "exit") == 0)
+            break;
     }
 }
