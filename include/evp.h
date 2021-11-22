@@ -26,7 +26,7 @@
 #define _EVP_H_
 
 char *generate_key(int);
-void encrypt(FILE *, FILE *, char *, char *);
-void decrypt(FILE *, FILE *, char *, char *);
+void evp_encrypt(FILE *, FILE *, char *, char *);
+void evp_decrypt(FILE *, FILE *, char *, char *);
 
 #endif /* _EVP_H_ */

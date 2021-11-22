@@ -41,7 +41,7 @@ char *generate_key(int length)
     return randomString;
 }
 
-void encrypt(FILE *in, FILE *out, char *key, char *iv){
+void evp_encrypt(FILE *in, FILE *out, char *key, char *iv){
     int chunk_size = 512;
     unsigned char inbuf[chunk_size];
     unsigned char outbuf[chunk_size + EVP_MAX_BLOCK_LENGTH];
@@ -78,7 +78,7 @@ void encrypt(FILE *in, FILE *out, char *key, char *iv){
     rewind(out);
 }
 
-void decrypt(FILE *in, FILE *out, char *key, char *iv)
+void evp_decrypt(FILE *in, FILE *out, char *key, char *iv)
 {
     int chunk_size = 512;
     unsigned char inbuf[chunk_size];

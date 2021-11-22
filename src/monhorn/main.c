@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
         // prevent_termination();
         // prevent_reboot();
 
-        char *input = decrypt(argv[1]);
+        char *input = crypto_decrypt(argv[1]);
         JSONObject *json = parseJSON(input);
 
         char *host = find_json(json, "host");
