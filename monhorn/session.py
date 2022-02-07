@@ -103,12 +103,23 @@ class MonhornSession(Session, ChannelClient):
                     break
 
                 elif commands[0] == 'help':
+                    self.print_table("Core Commands", ('Command', 'Description'), *[
+                        ('exit', 'Terminate Monhorn session.'),
+                        ('help', 'Show available commands.'),
+                        ('quit', 'Stop interaction.')
+                    ])
+
                     self.commands.show_commands(monhorn)
                     continue
 
-                self.commands.execute_custom_command(commands, monhorn)
-
                 if commands[0] == 'exit':
-                    self.client.terminated = True
-                    self.print_warning("Connection terminated.")
-                    return
+                    self.send_command("exit")
+                    self.channel.terminated = True
+
+            if self.channel.terminated:
+                self.print_warning("Connection terminated.")
+                self.close()
+                break
+
+            if commands:
+                self.commands.execute_custom_command(commands, monhorn)
