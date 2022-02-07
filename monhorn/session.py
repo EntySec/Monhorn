@@ -30,51 +30,58 @@ import json
 from hatsploit.lib.session import Session
 from hatsploit.lib.commands import Commands
 
-from hatsploit.utils.telnet import TelnetClient
+from hatsploit.utils.channel import ChannelClient
 
 
-class MonhornSession(Session, TelnetClient):
+class MonhornSession(Session, ChannelClient):
     commands = Commands()
 
     prompt = '%linemonhorn%end > '
     monhorn = f'{os.path.dirname(os.path.dirname(__file__))}/monhorn/commands/'
 
-    client = None
+    channel = None
 
     details = {
+        'Post': "",
         'Platform': "",
+        'Architecture': "",
         'Type': "monhorn"
     }
 
     def open(self, client):
-        self.client = self.open_telnet(client)
+        self.channel = self.open_channel(client)
 
     def close(self):
-        self.client.disconnect()
+        self.channel.disconnect()
 
     def heartbeat(self):
-        return not self.client.terminated
+        return not self.channel.terminated
 
-    def send_command(self, command, output=False, timeout=10):
+    def send_command(self, command, output=False, decode=True):
+        args = ''
+        token = self.random_string(8)
         commands = self.format_commands(command)
 
         if len(commands) > 1:
             args = ' '.join(commands[1:])
-        else:
-            args = None
 
         command_data = json.dumps({
             'cmd': commands[0],
-            'args': args
+            'args': args,
+            'token': token
         })
 
-        output = self.client.send_command(command_data, output, timeout)
-        return output
+        return self.channel.send_token_command(
+            command_data,
+            token,
+            output,
+            decode
+        )
 
     def interact(self):
         self.print_empty()
 
-        if self.client.terminated:
+        if self.channel.terminated:
             self.print_warning("Connection terminated.")
             return
 
