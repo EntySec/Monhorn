@@ -1,7 +1,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2020-2021 EntySec
+# Copyright (c) 2020-2022 EntySec
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,64 +22,60 @@
 # SOFTWARE.
 #
 
-AR = ar
-CC = gcc
-STRIP = strip
+archive = ar
+compiler = clang
 
-MKDIR = mkdir
-MSG = echo
-REMOVE = rm
+template = monhorn.bin
+library = libmonhorn.a
 
-INCLUDE = include
-SOURCE = src
-BUILD = build
+src = src
+includes = include
 
-CFLAGS = -std=c99 -Wall -Wextra -pedantic-errors -Werror -I$(INCLUDE) -g
-LDFLAGS = -lcrypto
+cflags = -std=c99
 
-SOURCES := $(wildcard $(SOURCE)/*.c)
-OBJECTS := $(patsubst $(SOURCE)/%.c, $(BUILD)/%.o, $(SOURCES))
-LIBRARY = libmonhorn.a
+template_sources = src/monhorn/template.c
 
-SRCS := $(wildcard src/monhorn/*.c)
-OBJS := $(patsubst %.c, %.o, $(SRCS))
-TARGET = monhorn.bin
+monhorn_sources = $(src)/base64.c $(src)/channel.c $(src)/console.c $(src)/json.c $(src)/utils.c
+monhorn_sources += $(src)/tools.c $(src)/monhorn.c $(src)/evp.c
 
-Q = @
+monhorn_objects = base64.o channel.o console.o json.o utils.o
+monhorn_objects += tools.o monhorn.o evp.o
 
-.PHONY: all build monhorn clean
+monhorn_cc_flags = $(cflags)
+monhorn_cc_flags += -I$(includes)
 
-all: build monhorn
+monhorn_ld_flags = -lcrypto -L. -lmonhorn
 
-setup:
-	$(Q) $(MKDIR) -p $(BUILD)
+ifeq ($(platform), apple_ios)
+	ios_cc_flags = -arch arm64 -arch arm64e -isysroot $(sdk)
+	ios_certificate = deps/sign.plist
+else ifeq ($(platform), macos)
+	macos_cc_flags = -arch x86_64 -isysroot $(sdk)
+endif
 
-build: setup $(LIBRARY)
+ifeq ($(platform), apple_ios)
+	monhorn_cc_flags += $(ios_cc_flags)
+else ifeq ($(platform), macos)
+	monhorn_cc_flags += $(macos_cc_flags)
+endif
+
+ifeq ($(platform), apple_ios)
+	codesign = ldid -S$(ios_certificate)
+else
+	codesign = echo
+endif
+
+.PHONY: all library template clean
+
+all: library template
 
 clean:
-	$(Q) $(MSG) [Cleaning...]
-	$(Q) $(REMOVE) -rf $(OBJECTS) $(BUILD) $(LIBRARY)
-	$(Q) $(MSG) [Done]
+	rm -rf $(monhorn_objects) $(template) $(library)
 
-pwny: $(OBJS)
-	$(Q) $(MSG) [Compiling...]
-	$(Q) $(CC) $(OBJS) -o $(TARGET) -I$(INCLUDE) $(LDFLAGS) -L. -lmonhorn
-	$(Q) $(MSG) [Done]
+library:
+	$(compiler) $(monhorn_cc_flags) $(monhorn_sources) -c
+	$(archive) rcs $(library) $(monhorn_objects)
 
-	$(Q) $(MSG) [Stripping...]
-	$(Q) $(STRIP) $(TARGET)
-	$(Q) $(MSG) [Done]
-
-%.o: %.c
-	$(Q) $(MSG) [Compiling...] $<
-	$(Q) $(CC) -c $< -o $@ $(CFLAGS)
-	$(Q) $(MSG) [Done]
-
-$(LIBRARY): $(OBJECTS)
-	$(Q) $(MSG) [Linking...] $@
-	$(Q) $(AR) rcs $@ $(OBJECTS)
-	$(Q) $(MSG) [Done]
-
-$(BUILD)/%.o: $(SOURCE)/%.c
-	$(Q) $(MSG) [Compiling...] $<
-	$(Q) $(CC) $(CFLAGS) -c $< -o $@
+template: $(LIBRARY)
+	$(compiler) $(monhorn_cc_flags) $(monhorn_ld_flags) $(template_sources) -o $(template)
+	$(codesign) $(template)
