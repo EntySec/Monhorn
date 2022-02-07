@@ -29,12 +29,15 @@ from setuptools import setup, find_packages
 setup(name='monhorn',
       version='1.0.0',
       description='Monhorn is an implementation of HatSploit ransomware for Unix-like systems, that firstly establishes a remote connection and then begins crypto operations.',
-      url='http://github.com/EntySec/Monhorn',
+      url='https://github.com/EntySec/Monhorn',
       author='EntySec',
       author_email='entysec@gmail.com',
       license='MIT',
       python_requires='>=3.7.0',
       packages=find_packages(),
       include_package_data=True,
+      install_requires=[
+          'hatvenom @ git+https://github.com/EntySec/HatVenom'
+      ],
       zip_safe=False
 )
