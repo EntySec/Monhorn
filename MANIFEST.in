@@ -1,2 +1,2 @@
-recursive-include pwny/commands *
-recursive-include monhorn/resources *
+recursive-include monhorn/commands *
+recursive-include monhorn/templates *
