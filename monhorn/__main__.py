@@ -27,20 +27,22 @@
 import os
 import json
 
+from hatvenom import HatVenom
 from hatsploit.utils.string import StringTools
 
 
 class Monhorn(StringTools):
-    monhorn = f'{os.path.dirname(os.path.dirname(__file__))}/monhorn/resources/'
+    hatvenom = HatVenom()
+    templates = f'{os.path.dirname(os.path.dirname(__file__))}/monhorn/templates/'
 
-    def get_payload(self, platform, arch):
-        payload = monhorn + platform + '/' + arch
+    def get_template(self, platform, arch):
+        payload = self.templates + platform + '/' + arch + '.bin'
 
         if os.path.exists(payload):
             return open(payload, 'rb').read()
         return None
 
-    def encode_args(self, port, host=None):
+    def encode_data(self, host=None, port=8888):
         if not host:
             data = json.dumps({
                 'port': str(port)
@@ -52,3 +54,13 @@ class Monhorn(StringTools):
             })
 
         return self.base64_string(data)
+
+    def get_monhorn(self, platform, arch, host=None, port=None):
+        template = self.get_template(platform, arch)
+
+        if not host and not port:
+            return template
+
+        return self.hatvenom.generate(platform, arch, template, {
+            'data': self.encode_data(host, port)
+        })
