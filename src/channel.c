@@ -1,7 +1,7 @@
 /*
 * MIT License
 *
-* Copyright (c) 2020-2021 EntySec
+* Copyright (c) 2020-2022 EntySec
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,31 @@ int open_channel(char *host, int port)
         return -1;
 
     return channel;
+}
+
+int listen_channel(int port)
+{
+    int channel = socket(AF_INET, SOCK_STREAM, 0);
+    if (channel == -1)
+        return -1;
+
+    struct sockaddr_in hint;
+    hint.sin_family = AF_INET;
+    hint.sin_addr.s_addr = htonl(INADDR_ANY);
+    hint.sin_port = htons(port);
+   
+    if (bind(channel, (struct sockaddr*)&hint, sizeof(hint)) != 0)
+        return -1;
+   
+    if (listen(channel, 5) != 0)
+        return -1;
+
+    struct sockaddr_in client;
+
+    unsigned int client_len = sizeof(client);
+    int new_channel = accept(channel, (struct sockaddr*)&client, &client_len);
+
+    return new_channel;
 }
 
 void send_channel(int channel, char *data)
