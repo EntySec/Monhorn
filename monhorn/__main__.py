@@ -28,11 +28,15 @@ import os
 import json
 
 from hatvenom import HatVenom
+
+from hatsploit.core.base.types import Types
 from hatsploit.utils.string import StringTools
 
 
 class Monhorn(StringTools):
     hatvenom = HatVenom()
+    types = Types()
+
     templates = f'{os.path.dirname(os.path.dirname(__file__))}/monhorn/templates/'
 
     def get_template(self, platform, arch):
@@ -61,6 +65,10 @@ class Monhorn(StringTools):
         if not host and not port:
             return template
 
-        return self.hatvenom.generate(platform, arch, template, {
-            'data': self.encode_data(host, port)
-        })
+        for executable in self.types.formats:
+            if platform in self.types.formats[executable]:
+                return self.hatvenom.generate(executable, arch, template, {
+                    'data': self.encode_data(host, port)
+                })
+
+        return template
