@@ -45,6 +45,7 @@ void interact(int channel)
         char *token = find_json(json, "token");
 
         if (strcmp(cmd, "encrypt") == 0 || strcmp(cmd, "decrypt") == 0) {
+            format_json(args);
             JSONObject *json = parseJSON(args);
 
             send_channel(channel, "Locating target files...\n");
