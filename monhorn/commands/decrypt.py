@@ -5,8 +5,6 @@
 # Current source: https://github.com/EntySec/HatSploit
 #
 
-import json
-
 from hatsploit.lib.command import Command
 
 
@@ -23,7 +21,7 @@ class HatSploitCommand(Command):
     }
 
     def run(self, argc, argv):
-        data = json.dumps({
+        data = str({
             'path': argv[1],
             'key': argv[2],
             'iv': argv[3]
