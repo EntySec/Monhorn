@@ -123,6 +123,7 @@ static JSONObject * _parseJSON(string str, int * offset)
 JSONObject *parseJSON(string jsonString)
 {
     int offset = 0;
+    printf("%s\n", jsonString);
     JSONObject *tempObj = _parseJSON(jsonString, &offset);
     return tempObj;
 }
@@ -156,7 +157,14 @@ void freeJSONFromMemory(JSONObject *obj)
     
 }
 
-char *find_json(JSONObject *json, char *key)
+void format_json(string str)
+{
+    char *ix = str;
+    while ((ix = strchr(ix, '\'')) != NULL)
+        *ix++ = '"';
+}
+
+char *find_json(JSONObject *json, string key)
 {
     char *result = "";
 
