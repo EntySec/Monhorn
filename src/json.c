@@ -106,6 +106,7 @@ static JSONObject * _parseJSON(string str, int * offset)
                 _offset += i + 2;
             }
             obj->pairs[obj->count - 1] = tempPtr;
+            
         } else if (*str == ',') {
             obj->count++;
             obj->pairs = renewWithSize(obj->pairs, JSONPair, obj->count);
