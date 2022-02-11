@@ -131,6 +131,7 @@ JSONObject *parseJSON(string jsonString)
 {
     int offset = 0;
     replace_char(jsonString, '\'', '"');
+    printf("%s\n", jsonString);
     JSONObject *tempObj = _parseJSON(jsonString, &offset);
     return tempObj;
 }
