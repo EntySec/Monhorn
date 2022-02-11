@@ -33,9 +33,10 @@ char *linkStr(char *s1, char *s2, int isPath)
 {
     char *separator = "/";
 
-    int length = isPath ? strlen(s1)+strlen(s2)+strlen(separator)+1 : strlen(s1)+strlen(s2)+1;
-    int size = isPath ? sizeof(s1)+sizeof(s2)+sizeof(separator)+1 : sizeof(s1)+sizeof(s2)+1;
-    char *newStr = (char *) calloc(length, size);
+    int length = isPath ? strlen(s1) + strlen(s2) + strlen(separator) + 1 : strlen(s1) + strlen(s2) + 1;
+    int size = isPath ? sizeof(s1) + sizeof(s2) + sizeof(separator) + 1 : sizeof(s1) + sizeof(s2) + 1;
+    char *newStr = (char *)calloc(length, size);
+
     strcat(newStr, s1);
 
     if (isPath)
@@ -81,4 +82,11 @@ void deleteFile(char *path)
         return;
 
     remove(path);
+}
+
+void replace_char(char *str, char oldchr, char newchr)
+{
+    char *ix = str;
+    while ((ix = strchr(ix, oldchr)) != NULL)
+        *ix++ = newchr;
 }
