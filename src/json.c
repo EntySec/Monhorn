@@ -22,6 +22,7 @@
 * SOFTWARE.
 */
 
+#include <stdio.h>
 #include "json.h"
 
 static int strNextOccurence(string str, char ch)
