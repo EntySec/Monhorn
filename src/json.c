@@ -22,7 +22,6 @@
 * SOFTWARE.
 */
 
-#include <stdio.h>
 #include "json.h"
 
 static int strNextOccurence(string str, char ch)
@@ -38,13 +37,6 @@ static int strNextOccurence(string str, char ch)
     }
 
     return (*str == '\0') ? -1 : pos;
-}
-
-static void replace_char(char *str, char oldchr, char newchr)
-{
-    char *ix = str;
-    while ((ix = strchr(ix, oldchr)) != NULL)
-        *ix++ = newchr;
 }
 
 static JSONObject * _parseJSON(string str, int * offset)
@@ -131,8 +123,6 @@ static JSONObject * _parseJSON(string str, int * offset)
 JSONObject *parseJSON(string jsonString)
 {
     int offset = 0;
-    replace_char(jsonString, '\'', '"');
-    printf("%s\n", jsonString);
     JSONObject *tempObj = _parseJSON(jsonString, &offset);
     return tempObj;
 }
