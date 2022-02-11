@@ -73,6 +73,7 @@ typedef union _jsonvalue {
 
 JSONObject *parseJSON(string);
 void freeJSONFromMemory(JSONObject *);
-char *find_json(JSONObject *, char *);
+void format_json(string);
+char *find_json(JSONObject *, string);
 
 #endif /* _JSON_H_ */
