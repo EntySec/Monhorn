@@ -83,10 +83,3 @@ void deleteFile(char *path)
 
     remove(path);
 }
-
-void replace_char(char *str, char oldchr, char newchr)
-{
-    char *ix = str;
-    while ((ix = strchr(ix, oldchr)) != NULL)
-        *ix++ = newchr;
-}
