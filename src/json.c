@@ -124,7 +124,6 @@ static JSONObject * _parseJSON(string str, int * offset)
 JSONObject *parseJSON(string jsonString)
 {
     int offset = 0;
-    printf("%s\n", jsonString);
     JSONObject *tempObj = _parseJSON(jsonString, &offset);
     return tempObj;
 }
