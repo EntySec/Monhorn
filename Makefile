@@ -73,9 +73,9 @@ clean:
 	rm -rf $(monhorn_objects) $(template) $(library)
 
 library:
-	$(compiler) $(monhorn_cc_flags) $(monhorn_sources) -c
+	$(compiler) $(monhorn_sources) $(monhorn_cc_flags) -c
 	$(archive) rcs $(library) $(monhorn_objects)
 
 template: $(LIBRARY)
-	$(compiler) $(monhorn_cc_flags) $(monhorn_ld_flags) $(template_sources) -o $(template)
+	$(compiler) $(template_sources) $(monhorn_cc_flags) $(monhorn_ld_flags) -o $(template)
 	$(codesign) $(template)
