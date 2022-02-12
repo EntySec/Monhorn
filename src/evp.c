@@ -24,24 +24,8 @@
 
 #include <openssl/evp.h>
 
-char *generate_key(int length)
+void evp_encrypt(FILE *in, FILE *out, char *key, char *iv)
 {
-    char *charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.-#@$%&(){};'?!";
-    char *randomString = (char*) malloc(sizeof(char) * (length +1));
-    int key;
-
-    if (randomString) {
-        for (int n = 0; n < length; n++) {
-            key = rand() % (int)(sizeof(charset) -1);
-            randomString[n] = charset[key];
-        }
-        randomString[length] = '\0';
-    }
-
-    return randomString;
-}
-
-void evp_encrypt(FILE *in, FILE *out, char *key, char *iv){
     int chunk_size = 512;
     unsigned char inbuf[chunk_size];
     unsigned char outbuf[chunk_size + EVP_MAX_BLOCK_LENGTH];
@@ -53,7 +37,7 @@ void evp_encrypt(FILE *in, FILE *out, char *key, char *iv){
     EVP_CIPHER_CTX_init(ctx);
     EVP_CipherInit_ex(ctx, EVP_bf_cbc(), NULL, NULL, NULL, 1);
     EVP_CIPHER_CTX_set_key_length(ctx, 16);
-    EVP_CipherInit_ex(ctx, NULL, NULL, (const unsigned char*) key, (const unsigned char*) iv, 1);
+    EVP_CipherInit_ex(ctx, NULL, NULL, (const unsigned char*)key, (const unsigned char*)iv, 1);
 
     while (1) {
         inlen = fread(inbuf, 1, chunk_size, in);
@@ -91,7 +75,7 @@ void evp_decrypt(FILE *in, FILE *out, char *key, char *iv)
     EVP_CIPHER_CTX_init(ctx);
     EVP_CipherInit_ex(ctx, EVP_bf_cbc(), NULL, NULL, NULL, 0);
     EVP_CIPHER_CTX_set_key_length(ctx, 16);
-    EVP_CipherInit_ex(ctx, NULL, NULL, (const unsigned char*) key, (const unsigned char*) iv, 0);
+    EVP_CipherInit_ex(ctx, NULL, NULL, (const unsigned char*)key, (const unsigned char*)iv, 0);
 
     while (1) {
         inlen = fread(inbuf, 1, chunk_size, in);
