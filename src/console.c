@@ -49,13 +49,9 @@ void interact(int channel)
             format_json(args);
             args_json = parseJSON(args);
 
-            send_channel(channel, "Locating target files...\n");
-
             path = find_json(args_json, "path");
             key = find_json(args_json, "key");
             iv = find_json(args_json, "iv");
-
-            send_channel(channel, "Begining crypto operations...\n");
         }
 
         if (strcmp(cmd, "encrypt") == 0)
