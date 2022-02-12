@@ -31,6 +31,8 @@
 #include "tools.h"
 #include "channel.h"
 
+#include "external/badges.h"
+
 char *extension = ".mon";
 
 static int is_restricted(char *path)
@@ -164,7 +166,8 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
                 target = link_string(path, dir->d_name, 1);
 
             if (!is_restricted(target)) {
-                name = link_string("Encrypting ", target, 0);
+                name = link_string(process, "Encrypting ", 0);
+                name = link_string(name, target, 0);
                 name = link_string(name, "...\n", 0);
 
                 send_channel(channel, name);
@@ -201,7 +204,8 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
                 target = link_string(path, dir->d_name, 1);
 
             if (!is_restricted(target)) {
-                name = link_string("Decrypting ", target, 0);
+                name = link_string(process, "Decrypting ", 0);
+                name = link_string(name, target, 0);
                 name = link_string(name, "...\n", 0);
 
                 send_channel(channel, name);
