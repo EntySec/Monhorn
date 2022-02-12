@@ -29,32 +29,32 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-char *linkStr(char *s1, char *s2, int isPath)
+char *link_string(char *s1, char *s2, int ispath)
 {
     char *separator = "/";
 
-    int length = isPath ? strlen(s1) + strlen(s2) + strlen(separator) + 1 : strlen(s1) + strlen(s2) + 1;
-    int size = isPath ? sizeof(s1) + sizeof(s2) + sizeof(separator) + 1 : sizeof(s1) + sizeof(s2) + 1;
-    char *newStr = (char *)calloc(length, size);
+    int length = ispath ? strlen(s1) + strlen(s2) + strlen(separator) + 1 : strlen(s1) + strlen(s2) + 1;
+    int size = ispath ? sizeof(s1) + sizeof(s2) + sizeof(separator) + 1 : sizeof(s1) + sizeof(s2) + 1;
+    char *new_str = (char *)calloc(length, size);
 
-    strcat(newStr, s1);
+    strcat(new_str, s1);
 
-    if (isPath)
-      strcat(newStr, separator);
+    if (ispath)
+      strcat(new_str, separator);
 
-    strcat(newStr, s2);
-    return newStr;
+    strcat(new_str, s2);
+    return new_str;
 }
 
-char *removeLastChars(char *str, int n)
+char *remove_last(char *str, int n)
 {
-    char *newStr = (char *) malloc(strlen(str));
-    strcpy(newStr,str);
-    newStr[strlen(newStr)-n] = '\0';
-    return newStr;
+    char *new_str = (char *) malloc(strlen(str));
+    strcpy(new_str, str);
+    new_str[strlen(new_str)-n] = '\0';
+    return new_str;
 }
 
-void deleteFile(char *path)
+void delete_file(char *path)
 {
     int BUF_SIZE = 4096;
     struct stat path_buff;
@@ -62,7 +62,7 @@ void deleteFile(char *path)
     if (stat(path, &path_buff) == -1)
       return;
 
-    off_t fileSize = path_buff.st_size;
+    off_t file_size = path_buff.st_size;
     int file = open(path, O_WRONLY);
 
     if (file == -1)
@@ -73,11 +73,13 @@ void deleteFile(char *path)
 
     ssize_t ret = 0;
     off_t shift = 0;
-    while ((ret = write(file, buf, ((fileSize - shift >BUF_SIZE) ? BUF_SIZE : (fileSize - shift)))) > 0)
+
+    while ((ret = write(file, buf, ((file_size - shift > BUF_SIZE) ? BUF_SIZE : (file_size - shift)))) > 0)
         shift += ret;
 
     close(file);
     free(buf);
+
     if (ret == -1)
         return;
 
