@@ -129,7 +129,7 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
     if (fd == NULL)
         return -1;
 
-    char *name;
+    char *name, *target;
     struct dirent *dir;
 
     while ((dir = readdir(fd)) != NULL) {
@@ -137,12 +137,16 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
             strcmp(dir->d_name, "..") != 0 &&
             strstr(dir->d_name, extension) == NULL) {
 
-            name = link_string("Encrypting ", dir->d_name, 0);
-            name = link_string(name, "\n", 0);
-            send_channel(channel, name);
+            target = link_string(path, dir->d_name, 1);
 
-            recursive_encrypt(dir->d_name, key, iv);
+            name = link_string("Encrypting ", target, 0);
+            name = link_string(name, "\n", 0);
+
+            send_channel(channel, name);
+            recursive_encrypt(target, key, iv);
+
             free(name);
+            free(target);
         }
     }
 
@@ -157,19 +161,23 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
     if (fd == NULL)
         return -1;
 
-    char *name;
+    char *name, *target;
     struct dirent *dir;
 
     while ((dir = readdir(fd)) != NULL) {
         if (strcmp(dir->d_name, ".") != 0 &&
             strcmp(dir->d_name, "..") != 0) {
 
-            name = link_string("Decrypting ", dir->d_name, 0);
-            name = link_string(name, "\n", 0);
-            send_channel(channel, name);
+            target = link_string(path, dir->d_name, 1);
 
-            recursive_decrypt(dir->d_name, key, iv);
+            name = link_string("Decrypting ", target, 0);
+            name = link_string(name, "\n", 0);
+
+            send_channel(channel, name);
+            recursive_decrypt(target, key, iv);
+
             free(name);
+            free(target);
         }
     }
 
