@@ -52,7 +52,7 @@ static int recursive_encrypt(char *path, char *key, char *iv)
 
             target = link_string(path, dir->d_name, 1);
 
-            if (recursive_encrypt(channel, target, key, iv) < 0) {
+            if (recursive_encrypt(target, key, iv) < 0) {
                 resource = fopen(target, "rb");
 
                 if (resource != NULL) {
@@ -96,7 +96,7 @@ static int recursive_decrypt(char *path, char *key, char *iv)
 
             target = link_string(path, dir->d_name, 1);
 
-            if (recursive_decrypt(channel, target, key, iv) < 0) {
+            if (recursive_decrypt(target, key, iv) < 0) {
                 resource = fopen(target, "rb");
 
                 if (resource != NULL) {
