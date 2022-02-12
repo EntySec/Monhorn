@@ -68,7 +68,7 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
                     free(name);
                 }
             } else {
-                process = link_string("Encrypting ", dir->d_name, 0);
+                process = link_string("Encrypting ", target, 0);
                 process = link_string(process, "\n");
 
                 send_channel(channel, process);
@@ -117,7 +117,7 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
                     free(name);
                 }
             } else {
-                process = link_string("Decrypting ", dir->d_name, 0);
+                process = link_string("Decrypting ", target, 0);
                 process = link_string(process, "\n");
 
                 send_channel(channel, process);
