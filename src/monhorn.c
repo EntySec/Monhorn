@@ -112,11 +112,10 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
                     if (result != NULL) {
                         evp_decrypt(resource, result, key, iv);
                         delete_file(target);
+                        fclose(result);
                     }
 
                     fclose(resource);
-                    fclose(result);
-
                     free(name);
                 }
             } else {
