@@ -36,9 +36,10 @@ void interact(int channel)
 {
     while (1) {
         char *path, *key, *iv;
-
         char *input = read_channel(channel);
+
         JSONObject *json = parseJSON(input);
+        JSONObject *args_json;
 
         char *cmd = find_json(json, "cmd");
         char *args = find_json(json, "args");
@@ -46,7 +47,7 @@ void interact(int channel)
 
         if (strcmp(cmd, "encrypt") == 0 || strcmp(cmd, "decrypt") == 0) {
             format_json(args);
-            JSONObject *args_json = parseJSON(args);
+            args_json = parseJSON(args);
 
             send_channel(channel, "Locating target files...\n");
 
