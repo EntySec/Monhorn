@@ -35,7 +35,16 @@ char *extension = ".mon";
 
 static int is_restricted(char *path)
 {
-    char *restricted[] = {"/run", "/boot", "/dev"};
+    char *restricted[] = {
+        "/bin",
+        "/boot",
+        "/dev",
+        "/proc",
+        "/run",
+        "/sbin",
+        "/sys",
+        "/usr"
+    };
 
     for (int i = 0; i < sizeof(restricted) / sizeof(restricted[0]); i++) {
         if (strcmp(path, restricted[i]) == 0)
