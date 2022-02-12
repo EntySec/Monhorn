@@ -25,8 +25,8 @@
 #ifndef _TOOLS_H_
 #define _TOOLS_H_
 
-char *linkStr(char *, char *, int);
-char *removeLastChars(char *, int);
-void deleteFile(char *);
+char *link_string(char *, char *, int);
+char *remove_last(char *, int);
+void delete_file(char *);
 
 #endif /* _TOOLS_H_ */
