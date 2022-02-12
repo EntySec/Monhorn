@@ -52,15 +52,17 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
 
             target = link_string(path, dir->d_name, 1);
 
-            if (begin_encrypt(channel, target, key, iv) == 0) {
+            if (begin_encrypt(channel, target, key, iv) < 0) {
                 resource = fopen(target, "rb");
 
                 if (resource != NULL) {
                     name = link_string(target, extension, 0);
                     result = fopen(name, "wb");
 
-                    evp_encrypt(resource, result, key, iv);
-                    delete_file(target);
+                    if (result != NULL) {
+                        evp_encrypt(resource, result, key, iv);
+                        delete_file(target);
+                    }
 
                     fclose(resource);
                     fclose(result);
@@ -101,15 +103,17 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
 
             target = link_string(path, dir->d_name, 1);
 
-            if (begin_decrypt(channel, target, key, iv) == 0) {
+            if (begin_decrypt(channel, target, key, iv) < 0) {
                 resource = fopen(target, "rb");
 
                 if (resource != NULL) {
                     name = remove_last(target, strlen(extension));
                     result = fopen(name, "wb");
 
-                    evp_decrypt(resource, result, key, iv);
-                    delete_file(target);
+                    if (result != NULL) {
+                        evp_decrypt(resource, result, key, iv);
+                        delete_file(target);
+                    }
 
                     fclose(resource);
                     fclose(result);
