@@ -226,8 +226,6 @@ int begin_decrypt(int channel, char *path, char *key, char *iv)
                 ));
 
                 recursive_decrypt(target, key, iv);
-
-                free(name);
             }
 
             free(target);
