@@ -30,11 +30,12 @@ import json
 from hatsploit.lib.session import Session
 from hatsploit.lib.commands import Commands
 
-from hatsploit.utils.openssl import OpenSSLTools
+from hatsploit.utils.ssl import SSLTools
+from hatsploit.utils.string import StringTools
 from hatsploit.utils.channel import ChannelClient
 
 
-class MonhornSession(Session, OpenSSLTools, ChannelClient):
+class MonhornSession(Session, SSLTools, StringTools, ChannelClient):
     commands = Commands()
 
     prompt = '%linemonhorn%end > '
