@@ -43,7 +43,7 @@ SSL *open_channel(char *host, int port)
     OpenSSL_add_all_algorithms();
 
     SSL *channel;
-    SSL_CTX *channel_ctx = SSL_CTX_new(SSLv23_method());
+    SSL_CTX *channel_ctx = SSL_CTX_new(TLS_method());
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
