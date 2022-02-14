@@ -10,7 +10,7 @@ from hatsploit.lib.command import Command
 
 class HatSploitCommand(Command):
     details = {
-        'Category': "ransomware",
+        'Category': "crypto",
         'Name': "encrypt",
         'Authors': [
             'Ivan Nikolsky (enty8080) - command developer'
