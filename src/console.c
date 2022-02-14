@@ -32,7 +32,9 @@
 #include "channel.h"
 #include "monhorn.h"
 
-void interact(int channel)
+#include <openssl/ssl.h>
+
+void interact(SSL *channel)
 {
     while (1) {
         char *path, *key, *iv;
