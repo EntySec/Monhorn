@@ -25,18 +25,16 @@
 #
 
 import os
-import ssl
 import json
 
-from hatsploit.lib.loot import Loot
 from hatsploit.lib.session import Session
 from hatsploit.lib.commands import Commands
 
+from hatsploit.utils.openssl import OpenSSLTools
 from hatsploit.utils.channel import ChannelClient
 
 
-class MonhornSession(Session, ChannelClient):
-    loot = Loot().loot
+class MonhornSession(Session, OpenSSLTools, ChannelClient):
     commands = Commands()
 
     prompt = '%linemonhorn%end > '
@@ -52,29 +50,8 @@ class MonhornSession(Session, ChannelClient):
     }
 
     def open(self, client):
-        self.print_process("Generating TLS certificate...")
-
-        certfile = self.loot + 'monhorn.crt'
-        csrfile = self.loot + 'monhorn.csr'
-        keyfile = self.loot + 'monhorn.key'
-
-        os.system(
-            f"openssl genrsa -out {keyfile} 2048 2>/dev/null;" +
-            f"openssl req -new -key {keyfile} -subj '/C=US/ST=Monhorn/L=Monhorn/O=Monhorn/CN=Monhorn' -out {csrfile};" +
-            f"openssl x509 -req -days 365 -in {csrfile} -signkey {keyfile} -out {certfile} 2>/dev/null"
-        )
-
-        self.print_process("Establishing TLS connection...")
-
-        channel = ssl.wrap_socket(
-            client,
-            server_side=True,
-            certfile=certfile,
-            keyfile=keyfile,
-            ssl_version=ssl.PROTOCOL_TLS
-        )
-
-        self.channel = self.open_channel(channel)
+        client = self.wrap_client(client)
+        self.channel = self.open_channel(client)
 
     def close(self):
         self.channel.disconnect()
