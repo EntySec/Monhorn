@@ -44,7 +44,7 @@ monhorn_objects += tools.o monhorn.o evp.o
 monhorn_cc_flags = $(cflags)
 monhorn_cc_flags += -I$(includes)
 
-monhorn_ld_flags = -lcrypto -lssl -L. -lmonhorn
+monhorn_ld_flags = -lssl -lcrypto -L. -lmonhorn
 
 ifeq ($(platform), apple_ios)
 	ios_cc_flags = -arch arm64 -arch arm64e -isysroot $(sdk)
