@@ -71,7 +71,7 @@ class MonhornSession(Session, ChannelClient):
             server_side=True,
             certfile=certfile,
             keyfile=keyfile,
-            ssl_version=ssl.PROTOCOL_SSLv23
+            ssl_version=ssl.PROTOCOL_TLS
         )
 
         self.channel = self.open_channel(channel)
