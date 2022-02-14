@@ -28,11 +28,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <openssl/ssl.h>
+
 #include "json.h"
 #include "channel.h"
 #include "monhorn.h"
-
-#include <openssl/ssl.h>
 
 void interact(SSL *channel)
 {
