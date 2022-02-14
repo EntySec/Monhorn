@@ -27,11 +27,11 @@
 #include <string.h>
 #include <dirent.h>
 
+#include <openssl/ssl.h>
+
 #include "evp.h"
 #include "tools.h"
 #include "channel.h"
-
-#include <openssl/ssl.h>
 
 #include "external/badges.h"
 
