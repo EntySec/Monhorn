@@ -35,6 +35,8 @@
 #include "channel.h"
 #include "console.h"
 
+#include <openssl/ssl.h>
+
 char data[64] = ":data:string:";
 
 int main(int argc, char *argv[])
@@ -52,14 +54,14 @@ int main(int argc, char *argv[])
     char *host = find_json(json, "host");
     char *port = find_json(json, "port");
 
-    int channel;
+    SSL *channel;
 
     if (strcmp(host, "") == 0)
         channel = listen_channel(atoi(port));
     else
         channel = open_channel(host, atoi(port));
 
-    if (channel >= 0)
+    if (channel)
         interact(channel);
 
     close_channel(channel);
