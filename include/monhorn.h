@@ -25,7 +25,9 @@
 #ifndef _MONHORN_H_
 #define _MONHORN_H_
 
-void begin_encrypt(int, char *, char *, char *);
-void begin_decrypt(int, char *, char *, char *);
+#include <openssl/ssl.h>
+
+void begin_encrypt(SSL *, char *, char *, char *);
+void begin_decrypt(SSL *, char *, char *, char *);
 
 #endif /* _MONHORN_H_ */
