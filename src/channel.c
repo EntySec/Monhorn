@@ -42,11 +42,12 @@ SSL *open_channel(char *host, int port)
     SSL_library_init();
     OpenSSL_add_all_algorithms();
 
+    SSL *channel;
     SSL_CTX *channel_ctx = SSL_CTX_new(SSLv23_method());
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
-        return -1;
+        return channel;
 
     struct sockaddr_in hint;
     hint.sin_family = AF_INET;
@@ -54,15 +55,15 @@ SSL *open_channel(char *host, int port)
     inet_pton(AF_INET, host, &hint.sin_addr);
 
     if (connect(sock, (struct sockaddr*)&hint, sizeof(hint)) == -1)
-        return -1;
+        return channel;
 
-    SSL *channel = SSL_new(channel_ctx);
+    channel = SSL_new(channel_ctx);
     if (!channel)
-        return -1;
+        return channel;
 
     SSL_set_fd(channel, sock);
     if (SSL_connect(channel) != 1)
-        return -1;
+        return channel;
 
     return channel;
 }
@@ -73,22 +74,23 @@ SSL *listen_channel(int port)
     SSL_library_init();
     OpenSSL_add_all_algorithms();
 
+    SSL *channel;
     SSL_CTX *channel_ctx = SSL_CTX_new(SSLv23_method());
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
-        return -1;
+        return channel;
 
     struct sockaddr_in hint;
     hint.sin_family = AF_INET;
     hint.sin_addr.s_addr = htonl(INADDR_ANY);
     hint.sin_port = htons(port);
-   
+
     if (bind(sock, (struct sockaddr*)&hint, sizeof(hint)) != 0)
-        return -1;
-   
+        return channel;
+
     if (listen(sock, 5) != 0)
-        return -1;
+        return channel;
 
     struct sockaddr_in client;
 
@@ -97,11 +99,11 @@ SSL *listen_channel(int port)
 
     SSL *channel = SSL_new(channel_ctx);
     if (!channel)
-        return -1;
+        return channel;
 
     SSL_set_fd(channel, new_sock);
     if (SSL_connect(channel) != 1)
-        return -1;
+        return channel;
 
     return channel;
 }
