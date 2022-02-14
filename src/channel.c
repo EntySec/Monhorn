@@ -32,13 +32,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include <openssl/bio.h>
 #include <openssl/ssl.h>
-#include <openssl/err.h>
 
 SSL *open_channel(char *host, int port)
 {
-    SSL_load_error_strings();
     SSL_library_init();
     OpenSSL_add_all_algorithms();
 
@@ -128,6 +125,5 @@ void close_channel(SSL *channel)
 {
     SSL_shutdown(channel);
     SSL_free(channel);
-    ERR_free_strings();
     EVP_cleanup();
 }
