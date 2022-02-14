@@ -95,9 +95,9 @@ SSL *listen_channel(int port)
     struct sockaddr_in client;
 
     unsigned int client_len = sizeof(client);
-    int new_sock = accept(channel, (struct sockaddr*)&client, &client_len);
+    int new_sock = accept(sock, (struct sockaddr*)&client, &client_len);
 
-    SSL *channel = SSL_new(channel_ctx);
+    channel = SSL_new(channel_ctx);
     if (!channel)
         return channel;
 
@@ -116,7 +116,7 @@ void send_channel(SSL *channel, char *data)
 char *read_channel(SSL *channel)
 {
     char buffer[2048] = "";
-    SSL_read(сhannel, buffer, sizeof(buffer))
+    SSL_read(сhannel, buffer, sizeof(buffer));
 
     char *buf = (char *)calloc(1, strlen(buffer) + 1);
     strcpy(buf, buffer);
@@ -124,7 +124,7 @@ char *read_channel(SSL *channel)
     return buf;
 }
 
-void close_channel(SSL *client)
+void close_channel(SSL *channel)
 {
     SSL_shutdown(channel);
     SSL_free(channel);
