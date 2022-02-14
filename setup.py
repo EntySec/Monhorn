@@ -28,7 +28,7 @@ from setuptools import setup, find_packages
 
 setup(name='monhorn',
       version='1.0.0',
-      description='Monhorn is an implementation of HatSploit encryptor for Unix-like systems, that firstly establishes a remote connection and then begins crypto operations.',
+      description='Monhorn is an implementation of HatSploit encryptor that firstly establishes a remote connection and then begins crypto operations.',
       url='https://github.com/EntySec/Monhorn',
       author='EntySec',
       author_email='entysec@gmail.com',
