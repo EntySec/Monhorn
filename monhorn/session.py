@@ -74,11 +74,12 @@ class MonhornSession(Session, SSLTools, StringTools, ChannelClient):
             'token': token
         })
 
-        return self.channel.send_token_command(
+        self.channel.send_token_command(
             command_data,
             token,
             output,
-            decode
+            decode,
+            True
         )
 
     def interact(self):
