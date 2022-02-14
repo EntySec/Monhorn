@@ -28,14 +28,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <openssl/ssl.h>
+
 #include "json.h"
 #include "utils.h"
 #include "base64.h"
-
 #include "channel.h"
 #include "console.h"
-
-#include <openssl/ssl.h>
 
 char data[64] = ":data:string:";
 
