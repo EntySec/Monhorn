@@ -39,8 +39,8 @@ These are platforms which are supported by Monhorn.
 To use Monhorn and build payloads you should import it to your source.
 
 ```python3
-from pwny import Monhorn
-from pwny import MonhornSession
+from monhorn import Monhorn
+from monhorn import MonhornSession
 ```
 
 * `Monhorn` - Monhorn utilities, mostly for generating payloads and encoding arguments.
