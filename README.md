@@ -24,7 +24,7 @@ pip3 install git+https://github.com/EntySec/HatSploit
 
 ## Building Monhorn
 
-**Dependencies:** `libssl-dev`
+**Dependencies:** `ssl`, `crypto`
 
 These are platforms which are supported by Monhorn.
 
