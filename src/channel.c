@@ -116,7 +116,7 @@ void send_channel(SSL *channel, char *data)
 char *read_channel(SSL *channel)
 {
     char buffer[2048] = "";
-    SSL_read(сhannel, buffer, sizeof(buffer));
+    SSL_read(channel, buffer, sizeof(buffer));
 
     char *buf = (char *)calloc(1, strlen(buffer) + 1);
     strcpy(buf, buffer);
