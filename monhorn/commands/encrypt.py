@@ -15,7 +15,7 @@ class HatSploitCommand(Command):
         'Authors': [
             'Ivan Nikolsky (enty8080) - command developer'
         ],
-        'Description': "Encrypt every data from the path.",
+        'Description': "Encrypt path with AES 256 cipher.",
         'Usage': "encrypt <path> <key> <iv>",
         'MinArgs': 3
     }
