@@ -40,7 +40,7 @@ To use Monhorn and build payloads you should import it to your source.
 
 ```python3
 from monhorn import Monhorn
-from monhorn import MonhornSession
+from monhorn.session import MonhornSession
 ```
 
 * `Monhorn` - Monhorn utilities, mostly for generating payloads and encoding arguments.
