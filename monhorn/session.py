@@ -31,8 +31,8 @@ from hatsploit.lib.loot import Loot
 from hatsploit.lib.session import Session
 from hatsploit.lib.commands import Commands
 
-from pex.proto.ssl import SSLTools
-from pex.proto.string import StringTools
+from pex.ssl import SSLTools
+from pex.string import StringTools
 from pex.proto.channel import ChannelClient
 
 
