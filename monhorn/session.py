@@ -31,12 +31,12 @@ from hatsploit.lib.loot import Loot
 from hatsploit.lib.session import Session
 from hatsploit.lib.commands import Commands
 
-from pex.ssl import SSLTools
-from pex.string import StringTools
+from pex.ssl import OpenSSL
+from pex.string import String
 from pex.proto.channel import ChannelClient
 
 
-class MonhornSession(Session, SSLTools, StringTools, ChannelClient):
+class MonhornSession(Session, OpenSSL, String, ChannelClient):
     loot = Loot()
     commands = Commands()
 
