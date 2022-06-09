@@ -23,10 +23,17 @@
 #
 
 archive = ar
-compiler = clang
 
-template = monhorn.bin
-library = libmonhorn.a
+ifeq ($(platform), windows)
+	compiler = x86_64-w64-mingw32-gcc
+else
+	compiler = clang
+endif
+
+certificate = deps/sign.plist
+
+monhorn_template = monhorn.bin
+monhorn_library = libmonhorn.a
 
 src = src
 includes = include
@@ -48,34 +55,26 @@ monhorn_ld_flags = -lssl -lcrypto -L. -lmonhorn
 
 ifeq ($(platform), apple_ios)
 	ios_cc_flags = -arch arm64 -arch arm64e -isysroot $(sdk)
-	ios_certificate = deps/sign.plist
-else ifeq ($(platform), macos)
-	macos_cc_flags = -arch x86_64 -isysroot $(sdk)
-endif
 
-ifeq ($(platform), apple_ios)
 	monhorn_cc_flags += $(ios_cc_flags)
 else ifeq ($(platform), macos)
+	macos_cc_flags = -arch x86_64 -isysroot $(sdk)
 	monhorn_cc_flags += $(macos_cc_flags)
 endif
 
-ifeq ($(platform), apple_ios)
-	codesign = ldid -S$(ios_certificate)
-else
-	codesign = echo
-endif
-
-.PHONY: all library template clean
+.PHONY: all library template clean codesign
 
 all: library template
 
 clean:
-	rm -rf $(monhorn_objects) $(template) $(library)
+	rm -rf $(monhorn_objects) $(monhorn_template) $(monhorn_library)
 
 library:
 	$(compiler) $(monhorn_sources) $(monhorn_cc_flags) -c
 	$(archive) rcs $(library) $(monhorn_objects)
 
-template: $(LIBRARY)
-	$(compiler) $(template_sources) $(monhorn_cc_flags) $(monhorn_ld_flags) -o $(template)
-	$(codesign) $(template)
+template: $(monhorn_library)
+	$(compiler) $(template_sources) $(monhorn_cc_flags) $(monhorn_ld_flags) -o $(monhorn_template)
+
+codesign: $(monhorn_template)
+	ldid -S$(certificate) $(monhorn_template)
