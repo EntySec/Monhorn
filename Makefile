@@ -22,7 +22,11 @@
 # SOFTWARE.
 #
 
-archive = ar
+ifeq ($(platform), windows)
+	archive = x86_64-w64-mingw32-gcc-ar
+else
+	archive = ar
+endif
 
 ifeq ($(platform), windows)
 	compiler = x86_64-w64-mingw32-gcc
