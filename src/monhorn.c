@@ -53,7 +53,7 @@ static int is_restricted(char *path)
     #else
     char *restricted[] = {
         "C:\\Windows"
-    }
+    };
     #endif
 
     for (int i = 0; i < sizeof(restricted) / sizeof(restricted[0]); i++) {
