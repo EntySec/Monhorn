@@ -71,7 +71,7 @@ clean:
 
 library:
 	$(compiler) $(monhorn_sources) $(monhorn_cc_flags) -c
-	$(archive) rcs $(library) $(monhorn_objects)
+	$(archive) rcs $(monhorn_library) $(monhorn_objects)
 
 template: $(monhorn_library)
 	$(compiler) $(template_sources) $(monhorn_cc_flags) $(monhorn_ld_flags) -o $(monhorn_template)
