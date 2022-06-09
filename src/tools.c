@@ -31,7 +31,11 @@
 
 char *link_string(char *s1, char *s2, int ispath)
 {
+    #ifndef _WIN32
     char *separator = "/";
+    #else
+    char *separator = "\\";
+    #endif
 
     int length = ispath ? strlen(s1) + strlen(s2) + strlen(separator) + 1 : strlen(s1) + strlen(s2) + 1;
     int size = ispath ? sizeof(s1) + sizeof(s2) + sizeof(separator) + 1 : sizeof(s1) + sizeof(s2) + 1;
