@@ -24,6 +24,7 @@ SOFTWARE.
 
 import os
 import json
+import socket
 
 from hatsploit.lib.loot import Loot
 from hatsploit.lib.session import Session
@@ -35,6 +36,12 @@ from pex.proto.channel import ChannelClient
 
 
 class MonhornSession(Session, OpenSSL, String, ChannelClient):
+    """ Subclass of monhorn module.
+
+    This subclass of monhonr module represents an implementation
+    of Monhorn session for HatSploit Framework.
+    """
+
     loot = Loot()
     commands = Commands()
 
@@ -50,7 +57,13 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
         'Type': "monhorn"
     }
 
-    def open(self, client):
+    def open(self, client: socket.socket) -> None:
+        """ Open Monhorn session.
+
+        :param socket.socket client: client to open session with
+        :return None: None
+        """
+
         client = self.wrap_client(
             client,
             self.loot.random_loot('key'),
@@ -59,13 +72,30 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
 
         self.channel = self.open_channel(client)
 
-    def close(self):
+    def close(self) -> None:
+        """ Close Monhorn session.
+
+        :return None: None
+        """
+
         self.channel.disconnect()
 
-    def heartbeat(self):
+    def heartbeat(self) -> bool:
+        """ Check Monhorn session heartbeat.
+
+        :return bool: True of Monhorn session is alive
+        """
+
         return not self.channel.terminated
 
-    def send_command(self, command, output=False, decode=True):
+    def send_command(self, command: str, output: bool = False, decode: bool = True) -> str:
+        """ Send command to Monhorn session.
+
+        :param str command: command to send
+        :param bool output: wait for the output or not
+        :param :
+        """
+
         args = ''
         token = self.random_string(8)
         commands = self.format_commands(command)
@@ -86,6 +116,8 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
             decode,
             self.print_empty
         )
+
+        return ''
 
     def interact(self):
         self.print_empty()
