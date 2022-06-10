@@ -41,8 +41,8 @@ class Monhorn(EXE, String):
     def get_template(self, platform: str, arch: str) -> bytes:
         """ Get Monhorn template.
 
-        :param str platform: platform to get template for
-        :param str arch: architecture to get template for
+        :param str platform: platform to get Monhorn template for
+        :param str arch: architecture to get Monhorn template for
         :return bytes: Monhorn template
         """
 
@@ -70,6 +70,8 @@ class Monhorn(EXE, String):
 
         :param str platform: platform to get Monhorn for
         :param str arch: arhcitecture to get Monhorn for
+        :param str host: host to get Monhorn with
+        :param int port: port to get Monhorn with
         :return bytes: Monhorn
         """
 
