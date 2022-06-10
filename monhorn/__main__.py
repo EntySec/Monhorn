@@ -30,14 +30,27 @@ from pex.string import String
 
 
 class Monhorn(EXE, String):
+    """ Main class of monhorn module.
+
+    This main class of monhorn module is intended for providing
+    an implementation of Monhorn manipulation methods.
+    """
+
     templates = f'{os.path.dirname(os.path.dirname(__file__))}/monhorn/templates/'
 
-    def get_template(self, platform, arch):
+    def get_template(self, platform: str, arch: str) -> bytes:
+        """ Get Monhorn template.
+
+        :param str platform: platform to get template for
+        :param str arch: architecture to get template for
+        :return bytes: Monhorn template
+        """
+
         payload = self.templates + platform + '/' + arch + '.bin'
 
         if os.path.exists(payload):
             return open(payload, 'rb').read()
-        return None
+        return b''
 
     def encode_data(self, host=None, port=8888):
         if not host:
@@ -52,7 +65,14 @@ class Monhorn(EXE, String):
 
         return self.base64_string(data, False)
 
-    def get_monhorn(self, platform, arch, host=None, port=8888):
+    def get_monhorn(self, platform: str, arch: str, host: str = '', port: int = 8888) -> bytes:
+        """ Get Monhorn.
+
+        :param str platform: platform to get Monhorn for
+        :param str arch: arhcitecture to get Monhorn for
+        :return bytes: Monhorn
+        """
+
         template = self.get_template(platform, arch)
 
         if not host and not port:
