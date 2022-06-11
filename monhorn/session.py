@@ -38,7 +38,7 @@ from pex.proto.channel import ChannelClient
 class MonhornSession(Session, OpenSSL, String, ChannelClient):
     """ Subclass of monhorn module.
 
-    This subclass of monhonr module represents an implementation
+    This subclass of monhorn module represents an implementation
     of the Monhorn session for HatSploit Framework.
     """
 
