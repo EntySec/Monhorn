@@ -39,7 +39,7 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
     """ Subclass of monhorn module.
 
     This subclass of monhonr module represents an implementation
-    of Monhorn session for HatSploit Framework.
+    of the Monhorn session for HatSploit Framework.
     """
 
     loot = Loot()
@@ -58,7 +58,7 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
     }
 
     def open(self, client: socket.socket) -> None:
-        """ Open Monhorn session.
+        """ Open the Monhorn session.
 
         :param socket.socket client: client to open session with
         :return None: None
@@ -73,7 +73,7 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
         self.channel = self.open_channel(client)
 
     def close(self) -> None:
-        """ Close Monhorn session.
+        """ Close the Monhorn session.
 
         :return None: None
         """
@@ -81,19 +81,19 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
         self.channel.disconnect()
 
     def heartbeat(self) -> bool:
-        """ Check Monhorn session heartbeat.
+        """ Check the Monhorn session heartbeat.
 
-        :return bool: True of Monhorn session is alive
+        :return bool: True if the Monhorn session is alive
         """
 
         return not self.channel.terminated
 
-    def send_command(self, command: str, output: bool = False, decode: bool = True) -> str:
-        """ Send command to Monhorn session.
+    def send_command(self, command: str, output: bool = False) -> str:
+        """ Send command to the Monhorn session.
 
         :param str command: command to send
         :param bool output: wait for the output or not
-        :param :
+        :return str: command output
         """
 
         args = ''
@@ -113,13 +113,17 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
             command_data,
             token,
             output,
-            decode,
             self.print_empty
         )
 
         return ''
 
-    def interact(self):
+    def interact(self) -> None:
+        """ Interact with the Monhorn session.
+
+        :return None: None
+        """
+
         self.print_empty()
 
         if self.channel.terminated:
