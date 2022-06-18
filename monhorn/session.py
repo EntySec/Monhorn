@@ -26,16 +26,17 @@ import os
 import json
 import socket
 
+from .console import Console
+
 from hatsploit.lib.loot import Loot
 from hatsploit.lib.session import Session
-from hatsploit.lib.commands import Commands
 
 from pex.ssl import OpenSSL
 from pex.string import String
 from pex.proto.channel import ChannelClient
 
 
-class MonhornSession(Session, OpenSSL, String, ChannelClient):
+class MonhornSession(Session, Console, OpenSSL, String, ChannelClient):
     """ Subclass of monhorn module.
 
     This subclass of monhorn module represents an implementation
@@ -43,11 +44,8 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
     """
 
     loot = Loot()
-    commands = Commands()
 
-    prompt = '%linemonhorn%end > '
-    monhorn = f'{os.path.dirname(os.path.dirname(__file__))}/monhorn/commands/'
-
+    monhorn = f'{os.path.dirname(os.path.dirname(__file__))}/monhorn/'
     channel = None
 
     details = {
@@ -124,47 +122,4 @@ class MonhornSession(Session, OpenSSL, String, ChannelClient):
         :return None: None
         """
 
-        self.print_empty()
-
-        if self.channel.terminated:
-            self.print_warning("Connection terminated.")
-            return
-
-        self.print_process("Loading Monhorn commands...")
-        commands = self.monhorn
-
-        monhorn = self.commands.load_commands(commands)
-        for command in monhorn:
-            monhorn[command].session = self
-
-        self.print_information(f"Loaded {len(monhorn)} commands.")
-        self.print_empty()
-
-        while True:
-            commands = self.input_empty(self.prompt)
-
-            if commands:
-                if commands[0] == 'quit':
-                    break
-
-                elif commands[0] == 'help':
-                    self.print_table("Core Commands", ('Command', 'Description'), *[
-                        ('exit', 'Terminate Monhorn session.'),
-                        ('help', 'Show available commands.'),
-                        ('quit', 'Stop interaction.')
-                    ])
-
-                    self.commands.show_commands(monhorn)
-                    continue
-
-                if commands[0] == 'exit':
-                    self.send_command("exit")
-                    self.channel.terminated = True
-
-            if self.channel.terminated:
-                self.print_warning("Connection terminated.")
-                self.close()
-                break
-
-            if commands:
-                self.commands.execute_custom_command(commands, monhorn)
+        self.monhorn_console(self)
