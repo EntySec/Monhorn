@@ -30,8 +30,10 @@ from hatsploit.lib.runtime import Runtime
 from hatsploit.lib.session import Session
 from hatsploit.lib.commands import Commands
 
+from pex.fs import FS
 
-class Console(Plugins, Badges, Runtime, Commands):
+
+class Console(Plugins, Badges, Runtime, Commands, FS):
     """ Subclass of monhorn module.
 
     This subclass of monhorn module is intended for providing
@@ -69,15 +71,21 @@ class Console(Plugins, Badges, Runtime, Commands):
         :return None: None
         """
 
-        self.commands = self.load_commands(
-            session.monhorn + 'commands/' + session.details['Platform'].lower()
-        )
+        commands = session.monhorn + 'commands/' + session.details['Platform'].lower()
+        exists, is_dir = self.exists(commands)
 
-        self.commands.update(
-            self.load_commands(
-                session.pwny + 'commands/generic'
+        if exists and not is_dir:
+            self.commands.update(
+                self.load_commands(commands)
             )
-        )
+
+        commands = session.monhorn + 'commands/generic'
+        exists, is_dir = self.exists(commands)
+
+        if exists and not is_dir:
+            self.commands.update(
+                self.load_commands(commands)
+            )
 
         for command in self.commands:
             self.commands[command].session = session
