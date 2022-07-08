@@ -22,8 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .plugins import Plugins
-
 from hatsploit.core.cli.badges import Badges
 
 from hatsploit.lib.runtime import Runtime
