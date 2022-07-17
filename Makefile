@@ -38,7 +38,7 @@ monhorn_library = libmonhorn.a
 src = src
 includes = include
 
-cflags = -std=c99
+cflags = -std=c99 --static
 
 template_sources = src/monhorn/template.c
 
