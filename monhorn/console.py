@@ -31,7 +31,7 @@ from hatsploit.lib.commands import Commands
 from pex.fs import FS
 
 
-class Console(Plugins, Badges, Runtime, Commands, FS):
+class Console(Badges, Runtime, Commands, FS):
     """ Subclass of monhorn module.
 
     This subclass of monhorn module is intended for providing
